@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "transport": "SFG1 WebSocket -> FFmpeg -> loopback RTMP",
+  "bytes": 77902,
+  "chunks": 5,
+  "acked": 4,
+  "receiverCodecs": [
+    "h264",
+    "aac"
+  ],
+  "relay": {
+    "type": "stopped",
+    "bytes": 77902,
+    "chunks": 5,
+    "filename": null,
+    "mode": "rtmp"
+  }
+}

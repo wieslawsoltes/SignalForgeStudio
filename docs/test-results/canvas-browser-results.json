@@ -1,0 +1,96 @@
+{
+  "engine": "Canvas 2D fallback",
+  "checks": [
+    {
+      "name": "Application boot and compositor initialization",
+      "passed": true,
+      "detail": "Canvas 2D fallback"
+    },
+    {
+      "name": "Keyboard duplicate and undo",
+      "passed": true
+    },
+    {
+      "name": "MediaStream camera capture with synthetic browser device",
+      "passed": true
+    },
+    {
+      "name": "Microphone capture and Web Audio channel creation",
+      "passed": true
+    },
+    {
+      "name": "Unreferenced capture tracks are stopped",
+      "passed": true
+    },
+    {
+      "name": "Chroma-key compositing removes green and reveals blue",
+      "passed": true,
+      "detail": "(0, 0, 255)"
+    },
+    {
+      "name": "Preview filter edits do not alter live program pixels",
+      "passed": true
+    },
+    {
+      "name": "Cut publishes the edited scene snapshot",
+      "passed": true
+    },
+    {
+      "name": "Premultiplied alpha composition",
+      "passed": true,
+      "detail": "(0, 128, 127)"
+    },
+    {
+      "name": "Crop removes source pixels without stretching",
+      "passed": true
+    },
+    {
+      "name": "Interactive source dragging and one-step undo",
+      "passed": true
+    },
+    {
+      "name": "Scene transition: fade",
+      "passed": true
+    },
+    {
+      "name": "Scene transition: wipe",
+      "passed": true
+    },
+    {
+      "name": "Scene transition: dip",
+      "passed": true
+    },
+    {
+      "name": "AudioWorklet loaded and actual signal metered",
+      "passed": true,
+      "detail": "-26.96 dB RMS"
+    },
+    {
+      "name": "Recording, pause/resume and IndexedDB finalization",
+      "passed": true,
+      "detail": "79312 bytes"
+    },
+    {
+      "name": "Export is a decodable 854\u00d7480 video with encoded audio",
+      "passed": true,
+      "detail": "vp8, opus"
+    },
+    {
+      "name": "Authenticated sequenced WebSocket archive is decodable",
+      "passed": true,
+      "detail": "6 chunks; 80546 bytes"
+    },
+    {
+      "name": "Portable project embeds assets and local persistence restores images",
+      "passed": true
+    },
+    {
+      "name": "No uncaught JavaScript or GPU validation errors",
+      "passed": true
+    },
+    {
+      "name": "Narrow viewport layout does not overflow horizontally",
+      "passed": true
+    }
+  ]
+}

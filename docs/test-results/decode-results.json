@@ -1,0 +1,102 @@
+[
+  {
+    "file": "tests/artifacts/webgpu/recording.webm",
+    "decodeExitCode": 0,
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "vp8",
+        "codec_type": "video",
+        "width": 854,
+        "height": 480,
+        "nb_read_frames": "41"
+      },
+      {
+        "codec_name": "opus",
+        "codec_type": "audio",
+        "nb_read_frames": "56"
+      }
+    ]
+  },
+  {
+    "file": "tests/artifacts/webgpu/relay-archive.webm",
+    "decodeExitCode": 0,
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "vp8",
+        "codec_type": "video",
+        "width": 854,
+        "height": 480,
+        "nb_read_frames": "43"
+      },
+      {
+        "codec_name": "opus",
+        "codec_type": "audio",
+        "nb_read_frames": "55"
+      }
+    ]
+  },
+  {
+    "file": "tests/artifacts/canvas/recording.webm",
+    "decodeExitCode": 0,
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "vp8",
+        "codec_type": "video",
+        "width": 854,
+        "height": 480,
+        "nb_read_frames": "62"
+      },
+      {
+        "codec_name": "opus",
+        "codec_type": "audio",
+        "nb_read_frames": "54"
+      }
+    ]
+  },
+  {
+    "file": "tests/artifacts/canvas/relay-archive.webm",
+    "decodeExitCode": 0,
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "vp8",
+        "codec_type": "video",
+        "width": 854,
+        "height": 480,
+        "nb_read_frames": "63"
+      },
+      {
+        "codec_name": "opus",
+        "codec_type": "audio",
+        "nb_read_frames": "53"
+      }
+    ]
+  },
+  {
+    "file": "tests/artifacts/rtmp/loopback.flv",
+    "decodeExitCode": 0,
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 854,
+        "height": 480,
+        "nb_read_frames": "98"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "nb_read_frames": "159"
+      }
+    ]
+  }
+]

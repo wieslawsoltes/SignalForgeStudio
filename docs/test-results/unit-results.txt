@@ -1,0 +1,134 @@
+
+> signalforge-studio@1.0.0 test
+> node --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: default project has five usable scenes and valid references
+ok 1 - default project has five usable scenes and valid references
+  ---
+  duration_ms: 2.640026
+  type: 'test'
+  ...
+# Subtest: snapshot isolates source content and item transforms
+ok 2 - snapshot isolates source content and item transforms
+  ---
+  duration_ms: 0.417217
+  type: 'test'
+  ...
+# Subtest: store undo and redo restore coherent graph state
+ok 3 - store undo and redo restore coherent graph state
+  ---
+  duration_ms: 1.69664
+  type: 'test'
+  ...
+# Subtest: stroke transaction coalesces many changes into one undo
+ok 4 - stroke transaction coalesces many changes into one undo
+  ---
+  duration_ms: 0.887493
+  type: 'test'
+  ...
+# Subtest: cancel rolls back an unfinished gesture
+ok 5 - cancel rolls back an unfinished gesture
+  ---
+  duration_ms: 1.273994
+  type: 'test'
+  ...
+# Subtest: invalid source references are rejected
+ok 6 - invalid source references are rejected
+  ---
+  duration_ms: 0.612937
+  type: 'test'
+  ...
+# Subtest: duplicate scene identity is rejected
+ok 7 - duplicate scene identity is rejected
+  ---
+  duration_ms: 0.462834
+  type: 'test'
+  ...
+# Subtest: invalid resolution and unknown source types are rejected
+ok 8 - invalid resolution and unknown source types are rejected
+  ---
+  duration_ms: 0.664363
+  type: 'test'
+  ...
+# Subtest: crop is normalized and numeric filters are clamped
+ok 9 - crop is normalized and numeric filters are clamped
+  ---
+  duration_ms: 0.616312
+  type: 'test'
+  ...
+# Subtest: untrusted external media URLs are discarded
+ok 10 - untrusted external media URLs are discarded
+  ---
+  duration_ms: 0.759574
+  type: 'test'
+  ...
+# Subtest: inverse rotated hit test respects source crop
+ok 11 - inverse rotated hit test respects source crop
+  ---
+  duration_ms: 0.324761
+  type: 'test'
+  ...
+# Subtest: decibels and gain agree
+ok 12 - decibels and gain agree
+  ---
+  duration_ms: 0.111735
+  type: 'test'
+  ...
+# Subtest: frame scheduler skips missed deadlines without a catch-up storm
+ok 13 - frame scheduler skips missed deadlines without a catch-up storm
+  ---
+  duration_ms: 0.154308
+  type: 'test'
+  ...
+# Subtest: A/V clock is monotonic across wall-clock queries
+ok 14 - A/V clock is monotonic across wall-clock queries
+  ---
+  duration_ms: 0.850038
+  type: 'test'
+  ...
+# Subtest: codec selection probes capabilities rather than assuming MP4
+ok 15 - codec selection probes capabilities rather than assuming MP4
+  ---
+  duration_ms: 0.243
+  type: 'test'
+  ...
+# Subtest: transport packet has exact big-endian sequence and timestamp
+ok 16 - transport packet has exact big-endian sequence and timestamp
+  ---
+  duration_ms: 0.738823
+  type: 'test'
+  ...
+# Subtest: transport rejects gaps, regressions, truncation and wrong magic
+ok 17 - transport rejects gaps, regressions, truncation and wrong magic
+  ---
+  duration_ms: 0.188209
+  type: 'test'
+  ...
+# Subtest: tokens require exact equal length and value
+ok 18 - tokens require exact equal length and value
+  ---
+  duration_ms: 0.114089
+  type: 'test'
+  ...
+# Subtest: relay handshake validates container, version, rate and bitrate
+ok 19 - relay handshake validates container, version, rate and bitrate
+  ---
+  duration_ms: 0.262829
+  type: 'test'
+  ...
+# Subtest: FFmpeg output uses fixed codecs and an argument vector
+ok 20 - FFmpeg output uses fixed codecs and an argument vector
+  ---
+  duration_ms: 0.210191
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 81.568858
