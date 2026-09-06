@@ -1,6 +1,6 @@
 # GitHub Pages deployment
 
-Public application: https://wieslawsoltes.github.io/SignalForgeStudio/
+Application URL: https://wieslawsoltes.github.io/SignalForgeStudio/
 
 ## Architecture
 
@@ -31,9 +31,11 @@ Place the loopback relay behind a trusted HTTPS/WSS reverse proxy, preserve the 
 
 The `pages.yml` workflow runs on pushes to `main`, pull requests, and manual dispatch. It installs the pinned relay dependency with `npm ci --ignore-scripts`, runs the unit tests, validates JavaScript syntax, and builds the standalone static artifact. Chromium then exercises WebGPU and the explicit Canvas fallback at `/SignalForgeStudio/`, including AudioWorklet loading, duplicate/undo, the static relay guard, and a real muxed recording stored in IndexedDB.
 
-Only successful, non-PR runs from `main` publish. The publish job updates the browser-only `gh-pages` branch without force-pushing, requests a Pages build through GitHub's documented API, and verifies the deployed source revision plus JavaScript, CSS, renderer, and AudioWorklet resources over HTTPS. It uses the repository-scoped `GITHUB_TOKEN` with `contents:write` and `pages:write`; no personal access token or external service is required. Pull requests receive read-only permissions and cannot publish.
+The exact tested build is uploaded with GitHub's official `upload-pages-artifact` action. Only successful, non-PR runs from `main` deploy using the official `deploy-pages` action and the `github-pages` environment. The deployment job has only `pages:write` and `id-token:write` permissions. No personal access token, source-branch force-push, or external hosting service is required.
 
-The repository uses **Settings > Pages > Build and deployment > Deploy from a branch > `gh-pages` > `/ (root)`**. Keep that source for this workflow. Each deployment contains a public `version.json` identifying the exact source commit. Relay code, tests, recording data, and credentials are excluded from the static tree.
+Configure **Settings > Pages > Build and deployment > Source > GitHub Actions** when setting up this workflow on a repository. The workflow reads the Pages configuration and reports an error if it is unavailable rather than silently claiming publication. The `gh-pages` branch retained from initial staging is not the source of subsequent artifact deployments.
+
+After deployment, CI checks the exact source revision and the application HTML, JavaScript, CSS, renderer, and AudioWorklet resources over public HTTPS. Each deployment contains a public `version.json` identifying its source commit. Relay code, tests, recording data, and credentials are excluded from the static artifact.
 
 ## Checks
 

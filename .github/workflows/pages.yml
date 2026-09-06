@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  pages: read
 concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: false
@@ -41,44 +42,32 @@ jobs:
           echo '```json' >> "$GITHUB_STEP_SUMMARY"
           cat tests/artifacts/pages/results.json >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: Identify Pages configuration
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api "repos/$GITHUB_REPOSITORY/pages" --jq '{build_type,source,html_url,status}'
+      - name: Stamp source revision
+        run: printf '{"commit":"%s"}\n' "$GITHUB_SHA" > dist/version.json
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: dist
   publish:
     name: Publish verified browser app
     needs: check
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     permissions:
-      contents: write
       pages: write
+      id-token: write
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: '24'
-      - run: npm run build:pages
-      - name: Publish static tree to gh-pages
-        id: site
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf '{"commit":"%s"}\n' "$GITHUB_SHA" > dist/version.json
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git fetch origin gh-pages
-          PARENT=$(git rev-parse FETCH_HEAD)
-          export GIT_INDEX_FILE="$RUNNER_TEMP/pages.index"
-          rm -f "$GIT_INDEX_FILE"
-          git -C dist --git-dir="$GITHUB_WORKSPACE/.git" --work-tree="$GITHUB_WORKSPACE/dist" add --all
-          TREE=$(git write-tree)
-          SHA=$(printf 'Publish SignalForge Studio %s\n' "$GITHUB_SHA" | git commit-tree "$TREE" -p "$PARENT")
-          git push origin "$SHA:refs/heads/gh-pages"
-          echo "commit=$SHA" >> "$GITHUB_OUTPUT"
-      - name: Request GitHub Pages build
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+      - name: Deploy GitHub Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
       - name: Verify published version and browser resources
         env:
           SITE_URL: https://wieslawsoltes.github.io/SignalForgeStudio/
