@@ -29,9 +29,11 @@ Place the loopback relay behind a trusted HTTPS/WSS reverse proxy, preserve the 
 
 ## CI and publication
 
-The `pages.yml` workflow runs on pushes to `main`, pull requests, and manual dispatch. It installs the pinned relay dependency with `npm ci --ignore-scripts`, runs the unit tests, validates JavaScript syntax, and builds the standalone static artifact. Only non-PR runs deploy, using the official GitHub Pages upload/deploy actions and an environment-scoped token with `pages:write` and `id-token:write`; no personal access token is stored.
+The `pages.yml` workflow runs on pushes to `main`, pull requests, and manual dispatch. It installs the pinned relay dependency with `npm ci --ignore-scripts`, runs the unit tests, validates JavaScript syntax, and builds the standalone static artifact. Chromium then exercises WebGPU and the explicit Canvas fallback at `/SignalForgeStudio/`, including AudioWorklet loading, duplicate/undo, the static relay guard, and a real muxed recording stored in IndexedDB.
 
-The initial `gh-pages` branch enables GitHub Pages branch detection for this project site. Subsequent frontend publishing is performed by the checked-in Actions workflow. If repository policy disables automatic Pages setup, select **Settings > Pages > Build and deployment > Source: GitHub Actions**, then rerun the workflow. The artifact contains its `index.html` at the root.
+Only successful, non-PR runs from `main` publish. The publish job updates the browser-only `gh-pages` branch without force-pushing, requests a Pages build through GitHub's documented API, and verifies the deployed source revision plus JavaScript, CSS, renderer, and AudioWorklet resources over HTTPS. It uses the repository-scoped `GITHUB_TOKEN` with `contents:write` and `pages:write`; no personal access token or external service is required. Pull requests receive read-only permissions and cannot publish.
+
+The repository uses **Settings > Pages > Build and deployment > Deploy from a branch > `gh-pages` > `/ (root)`**. Keep that source for this workflow. Each deployment contains a public `version.json` identifying the exact source commit. Relay code, tests, recording data, and credentials are excluded from the static tree.
 
 ## Checks
 

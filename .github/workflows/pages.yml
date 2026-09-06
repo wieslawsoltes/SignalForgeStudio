@@ -1,0 +1,108 @@
+name: Test and publish GitHub Pages
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  check:
+    name: Test browser app and relay core
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - name: Validate JavaScript syntax
+        run: find app relay scripts -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -n1 node --check
+      - run: npm run build:pages
+      - name: Install browser test tools
+        run: |
+          python3 -m pip install --disable-pip-version-check playwright==1.62.0
+          python3 -m playwright install --with-deps chromium
+      - name: Exercise WebGPU and Canvas under the Pages subpath
+        run: python3 tests/pages_browser.py
+      - name: Summarize browser checks
+        if: success()
+        run: |
+          echo '### Static-hosting browser checks' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat tests/artifacts/pages/results.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+  publish:
+    name: Publish verified browser app
+    needs: check
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - run: npm run build:pages
+      - name: Publish static tree to gh-pages
+        id: site
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '{"commit":"%s"}\n' "$GITHUB_SHA" > dist/version.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin gh-pages
+          PARENT=$(git rev-parse FETCH_HEAD)
+          export GIT_INDEX_FILE="$RUNNER_TEMP/pages.index"
+          rm -f "$GIT_INDEX_FILE"
+          git -C dist --git-dir="$GITHUB_WORKSPACE/.git" --work-tree="$GITHUB_WORKSPACE/dist" add --all
+          TREE=$(git write-tree)
+          SHA=$(printf 'Publish SignalForge Studio %s\n' "$GITHUB_SHA" | git commit-tree "$TREE" -p "$PARENT")
+          git push origin "$SHA:refs/heads/gh-pages"
+          echo "commit=$SHA" >> "$GITHUB_OUTPUT"
+      - name: Request GitHub Pages build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"
+      - name: Verify published version and browser resources
+        env:
+          SITE_URL: https://wieslawsoltes.github.io/SignalForgeStudio/
+        run: |
+          python3 - <<'PY'
+          import json, os, time, urllib.request
+          base, commit = os.environ['SITE_URL'], os.environ['GITHUB_SHA']
+          deadline = time.monotonic() + 360
+          while True:
+              try:
+                  with urllib.request.urlopen(base + 'version.json?commit=' + commit, timeout=20) as r:
+                      assert json.load(r)['commit'] == commit
+                  break
+              except Exception:
+                  if time.monotonic() >= deadline:
+                      raise
+                  time.sleep(10)
+          for path in ('', 'app.js', 'style.css', 'core/renderer-gpu.js', 'core/audio-worklet.js'):
+              with urllib.request.urlopen(base + path, timeout=30) as r:
+                  body = r.read()
+                  assert r.status == 200 and body, path
+                  if not path:
+                      assert b'content="static"' in body and b'SignalForge' in body
+          print('Verified live deployment:', base, commit)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write(f'### Published\n{base}\n\nSource commit: `{commit}`\n')
+          PY
